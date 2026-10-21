@@ -3,36 +3,38 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Swagger Petstore API 自动化测试项目">
-  <title>Swagger Petstore API Test Framework</title>
+  <meta name="description" content="软件测试自动化作品集：接口测试与网页自动化测试">
+  <title>软件测试自动化作品集</title>
   <style>
     :root {
-      --ink: #10233d;
-      --muted: #5e6c7d;
-      --paper: #f5f8fb;
-      --card: #ffffff;
-      --line: #dbe5ef;
-      --blue: #146ef5;
+      --ink: #12253f;
+      --muted: #627083;
+      --paper: #f5f8fc;
+      --card: rgba(255,255,255,.92);
+      --line: #d9e3ee;
+      --blue: #1769f6;
       --blue-soft: #e8f1ff;
-      --green: #07865a;
-      --green-soft: #e2f7ee;
+      --green: #087f59;
+      --green-soft: #e3f7ef;
+      --orange: #bf5b18;
+      --orange-soft: #fff0e5;
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
       color: var(--ink);
       background:
-        radial-gradient(circle at 7% 4%, #dceaff 0, transparent 30rem),
-        radial-gradient(circle at 96% 24%, #dcf6eb 0, transparent 27rem),
+        radial-gradient(circle at 5% 2%, #dce9ff 0, transparent 32rem),
+        radial-gradient(circle at 95% 18%, #daf5eb 0, transparent 28rem),
         var(--paper);
       font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
       line-height: 1.65;
     }
     a { color: var(--blue); }
     .shell {
-      width: min(1120px, calc(100% - 40px));
+      width: min(1160px, calc(100% - 40px));
       margin: 0 auto;
-      padding: 56px 0 72px;
+      padding: 58px 0 76px;
     }
     .status {
       display: inline-flex;
@@ -53,39 +55,17 @@
       content: "";
     }
     h1 {
-      max-width: 900px;
+      max-width: 920px;
       margin: 20px 0 14px;
-      font-size: clamp(38px, 7vw, 72px);
-      line-height: 1.05;
-      letter-spacing: -0.045em;
+      font-size: clamp(40px, 7vw, 76px);
+      line-height: 1.04;
+      letter-spacing: -0.05em;
     }
     .lead {
-      max-width: 780px;
+      max-width: 800px;
       margin: 0;
       color: var(--muted);
       font-size: clamp(17px, 2vw, 20px);
-    }
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 28px;
-    }
-    .button {
-      display: inline-flex;
-      align-items: center;
-      min-height: 46px;
-      padding: 0 19px;
-      color: white;
-      background: var(--ink);
-      border-radius: 12px;
-      text-decoration: none;
-      font-weight: 700;
-    }
-    .button.secondary {
-      color: var(--ink);
-      background: var(--card);
-      border: 1px solid var(--line);
     }
     .metrics {
       display: grid;
@@ -93,59 +73,91 @@
       gap: 14px;
       margin: 42px 0 22px;
     }
-    .metric, .card {
-      background: rgba(255, 255, 255, 0.9);
+    .metric, .project {
+      background: var(--card);
       border: 1px solid var(--line);
-      border-radius: 18px;
-      box-shadow: 0 12px 40px rgba(16, 35, 61, 0.06);
-      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      box-shadow: 0 14px 46px rgba(18, 37, 63, .07);
+      backdrop-filter: blur(12px);
     }
     .metric { padding: 22px; }
     .metric strong {
       display: block;
-      font-size: 30px;
-      letter-spacing: -0.03em;
+      font-size: 31px;
+      letter-spacing: -0.04em;
     }
     .metric span { color: var(--muted); font-size: 14px; }
-    .grid {
+    .projects {
       display: grid;
-      grid-template-columns: 1.35fr 0.65fr;
-      gap: 18px;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
     }
-    .card { padding: 28px; }
-    h2 {
-      margin: 0 0 16px;
-      font-size: 22px;
-      letter-spacing: -0.02em;
+    .project {
+      display: flex;
+      flex-direction: column;
+      padding: 30px;
     }
-    .flow {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-    }
-    .flow div {
-      min-height: 92px;
-      padding: 16px;
-      background: var(--blue-soft);
-      border-radius: 14px;
+    .tag {
+      align-self: flex-start;
+      padding: 5px 11px;
+      border-radius: 999px;
+      font-size: 13px;
       font-weight: 700;
     }
-    .flow small {
-      display: block;
-      margin-top: 6px;
+    .tag.api { color: var(--blue); background: var(--blue-soft); }
+    .tag.ui { color: var(--orange); background: var(--orange-soft); }
+    h2 {
+      margin: 18px 0 8px;
+      font-size: clamp(25px, 3vw, 34px);
+      line-height: 1.2;
+      letter-spacing: -0.03em;
+    }
+    .project p { margin: 0; color: var(--muted); }
+    .facts {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 22px 0;
+    }
+    .facts div {
+      padding: 12px;
+      background: #f3f7fb;
+      border-radius: 12px;
+    }
+    .facts strong { display: block; font-size: 18px; }
+    .facts small { color: var(--muted); }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: auto;
+    }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      min-height: 42px;
+      padding: 0 16px;
+      color: white;
+      background: var(--ink);
+      border-radius: 11px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .button.secondary {
+      color: var(--ink);
+      background: white;
+      border: 1px solid var(--line);
+    }
+    .note {
+      margin-top: 24px;
+      padding: 22px 24px;
       color: var(--muted);
-      font-weight: 400;
+      background: rgba(255,255,255,.66);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      font-size: 14px;
     }
-    ul { margin: 0; padding-left: 20px; }
-    li + li { margin-top: 8px; }
-    code {
-      padding: 2px 7px;
-      background: #eef2f7;
-      border-radius: 6px;
-      font-family: "Cascadia Code", Consolas, monospace;
-      font-size: 0.9em;
-    }
-    .note { margin-top: 20px; color: var(--muted); font-size: 14px; }
     footer {
       margin-top: 34px;
       padding-top: 20px;
@@ -153,86 +165,77 @@
       border-top: 1px solid var(--line);
       font-size: 14px;
     }
-    @media (max-width: 820px) {
+    @media (max-width: 860px) {
       .metrics { grid-template-columns: repeat(2, 1fr); }
-      .grid { grid-template-columns: 1fr; }
-      .flow { grid-template-columns: repeat(2, 1fr); }
+      .projects { grid-template-columns: 1fr; }
     }
     @media (max-width: 520px) {
-      .shell { width: min(100% - 24px, 1120px); padding-top: 32px; }
-      .metrics, .flow { grid-template-columns: 1fr; }
-      .card { padding: 22px; }
+      .shell { width: min(100% - 24px, 1160px); padding-top: 32px; }
+      .metrics, .facts { grid-template-columns: 1fr; }
+      .project { padding: 22px; }
     }
   </style>
 </head>
 <body>
   <main class="shell">
-    <div class="status">真实公开 API · 22 / 22 用例通过</div>
-    <h1>Swagger Petstore<br>API 自动化测试</h1>
+    <div class="status">真实公开系统 · 34 / 34 自动化用例通过</div>
+    <h1>软件测试<br>自动化作品集</h1>
     <p class="lead">
-      以 Swagger 官方公开 REST API 为被测系统，独立完成 OpenAPI 契约校验、宠物 CRUD、
-      状态查询、库存和订单生命周期测试。测试直接运行在真实公网接口上。
+      两个互补的个人测试项目：一个验证真实公开接口，另一个通过浏览器自动操作真实网页。
+      覆盖接口契约、业务流程、网页交互、数据清理和持续集成。
     </p>
 
-    <div class="actions">
-      <a class="button" href="https://github.com/ri-ce/petstore-api-test-framework">
-        查看 GitHub 源码
-      </a>
-      <a class="button secondary" href="test-report.html">打开测试报告</a>
-      <a class="button secondary" href="https://petstore3.swagger.io/">访问被测系统</a>
+    <section class="metrics" aria-label="作品集指标">
+      <div class="metric"><strong>2</strong><span>接口与网页测试项目</span></div>
+      <div class="metric"><strong>34</strong><span>自动化检查场景</span></div>
+      <div class="metric"><strong>100%</strong><span>最近一次执行通过率</span></div>
+      <div class="metric"><strong>CI</strong><span>GitHub 自动执行回归</span></div>
+    </section>
+
+    <section class="projects">
+      <article class="project">
+        <span class="tag api">接口自动化测试</span>
+        <h2>Swagger Petstore API</h2>
+        <p>
+          对真实公开的宠物商店接口进行契约校验、增删改查、状态筛选和订单生命周期测试。
+        </p>
+        <div class="facts">
+          <div><strong>22</strong><small>自动化用例</small></div>
+          <div><strong>100%</strong><small>通过率</small></div>
+          <div><strong>Pytest</strong><small>测试框架</small></div>
+        </div>
+        <div class="actions">
+          <a class="button" href="petstore-api.html">项目详情</a>
+          <a class="button secondary" href="test-report.html">测试报告</a>
+        </div>
+      </article>
+
+      <article class="project">
+        <span class="tag ui">网页自动化测试</span>
+        <h2>SauceDemo 商城</h2>
+        <p>
+          使用真实浏览器执行登录、商品浏览、排序、购物车操作和完整结算流程。
+        </p>
+        <div class="facts">
+          <div><strong>12</strong><small>自动化用例</small></div>
+          <div><strong>100%</strong><small>通过率</small></div>
+          <div><strong>Playwright</strong><small>浏览器工具</small></div>
+        </div>
+        <div class="actions">
+          <a class="button" href="saucedemo-ui.html">项目详情</a>
+          <a class="button secondary" href="saucedemo-ui-report.html">测试报告</a>
+        </div>
+      </article>
+    </section>
+
+    <div class="note">
+      两个项目的被测系统均为第三方公开测试环境。作品集展示的是测试设计、自动化框架、
+      异常验证、资源清理与持续集成能力，不把公开演示系统描述成企业生产项目。
     </div>
 
-    <section class="metrics" aria-label="项目指标">
-      <div class="metric"><strong>22</strong><span>参数化展开后的自动化用例</span></div>
-      <div class="metric"><strong>100%</strong><span>最近一次执行通过率</span></div>
-      <div class="metric"><strong>3</strong><span>契约、宠物、订单测试模块</span></div>
-      <div class="metric"><strong>真实</strong><span>Swagger 官方公开 API</span></div>
-    </section>
-
-    <section class="grid">
-      <article class="card">
-        <h2>覆盖真实接口链路</h2>
-        <div class="flow">
-          <div>01<small>OpenAPI 契约校验</small></div>
-          <div>02<small>宠物 CRUD 与状态查询</small></div>
-          <div>03<small>库存状态映射</small></div>
-          <div>04<small>订单创建、查询与删除</small></div>
-        </div>
-        <p class="note">
-          同时验证正常业务结果、404 资源不存在和 400 参数类型错误。
-        </p>
-      </article>
-
-      <article class="card">
-        <h2>框架技术要点</h2>
-        <ul>
-          <li>Pytest fixture 生成唯一 ID 与清理资源</li>
-          <li>Requests Session 统一封装请求</li>
-          <li>HTTPAdapter 提供超时与指数退避重试</li>
-          <li>GitHub Actions 自动执行完整回归</li>
-        </ul>
-      </article>
-
-      <article class="card">
-        <h2>本地运行</h2>
-        <p>进入仓库目录后执行：</p>
-        <p><code>.\run_tests.ps1</code></p>
-        <p>脚本会安装依赖并连接 Petstore V3 执行全部用例。</p>
-      </article>
-
-      <article class="card">
-        <h2>测试可靠性</h2>
-        <ul>
-          <li>不依赖固定商品或订单 ID</li>
-          <li>测试资源在结束后自动删除</li>
-          <li>临时网络异常使用有限次重试</li>
-          <li>业务断言失败不会被重试掩盖</li>
-        </ul>
-      </article>
-    </section>
-
     <footer>
-      个人测试框架 · 被测系统为 Swagger 官方公开示例 API，不代表企业生产项目。
+      <a href="https://github.com/ri-ce/qa-automation-portfolio">查看 GitHub 源码</a>
+      · Python · Pytest · Requests · Playwright · GitHub Actions
     </footer>
   </main>
 </body>

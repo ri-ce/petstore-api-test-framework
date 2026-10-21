@@ -6,9 +6,14 @@ if (-not (Test-Path ".venv\Scripts\python.exe")) {
 
 & ".venv\Scripts\python.exe" -m pip install -r requirements.txt
 & ".venv\Scripts\python.exe" -m pytest `
-    --html=reports\report.html `
+    tests `
+    --html=reports\petstore-report.html `
+    --self-contained-html
+& ".venv\Scripts\python.exe" -m pytest `
+    ui_tests `
+    --html=reports\saucedemo-ui-report.html `
     --self-contained-html
 
 Write-Host ""
-Write-Host "API: https://petstore3.swagger.io/api/v3"
-Write-Host "HTML report: reports\report.html"
+Write-Host "API test report: reports\petstore-report.html"
+Write-Host "UI test report: reports\saucedemo-ui-report.html"
