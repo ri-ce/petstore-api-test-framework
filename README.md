@@ -109,7 +109,7 @@ flowchart LR
 首次在本地运行网页测试时，Playwright 优先使用已安装的 Chrome 浏览器。
 在 GitHub Actions 中会安装独立的 Chromium 浏览器。
 
-## 目录结构
+目录结构
 
 ```text
 qa-automation-portfolio/
@@ -135,7 +135,6 @@ qa-automation-portfolio/
 └── run_ui_tests.ps1
 ```
 
-## 简历写法
 
 接口项目：
 
