@@ -1,0 +1,23 @@
+{
+  "users": {
+    "seller": {
+      "username": "alice",
+      "password": "Seller123!"
+    },
+    "buyer": {
+      "username": "bob",
+      "password": "Buyer123!"
+    },
+    "admin": {
+      "username": "admin",
+      "password": "Admin123!"
+    }
+  },
+  "listing": {
+    "title": "测试用机械键盘",
+    "description": "接口自动化测试创建的临时商品",
+    "category": "digital",
+    "price": 99.5,
+    "stock": 4
+  }
+}
