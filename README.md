@@ -4,13 +4,13 @@
 ![Python](https://img.shields.io/badge/Python-3.12%2B-3776AB?logo=python&logoColor=white)
 ![Pytest](https://img.shields.io/badge/Pytest-9.x-0A9EDC?logo=pytest&logoColor=white)
 
-一个用于软件测试岗位求职展示的接口自动化测试项目。项目以“校园二手交易平台”为业务背景，
+接口自动化测试项目。“校园二手交易平台”为业务背景，
 包含一个可独立运行的本地演示 API，以及分层封装的接口自动化测试框架。
 
-> 被测 API 是为测试演示而编写的本地服务，不是企业生产系统。项目重点是测试分析、
+> 被测 API 是为测试演示而编写的本地服务，项目重点是测试分析。
 > 接口框架设计和异常场景覆盖，所有结果均可本地复现。
 
-## 项目结果
+项目结果
 
 | 指标 | 结果 |
 | --- | --- |
@@ -23,7 +23,7 @@
 
 本地实测环境：Windows 11、Python 3.14.7、Pytest 9.1.1。
 
-## 自动化覆盖场景
+自动化覆盖场景
 
 - 登录成功、密码错误、参数缺失、非 JSON 请求体。
 - Token 鉴权和退出登录后 Token 失效。
@@ -35,7 +35,7 @@
 - 取消订单后恢复库存、售罄商品不可再下单。
 - 商品存在待处理订单时禁止删除。
 
-## 技术设计
+技术设计
 
 ```mermaid
 flowchart LR
@@ -57,7 +57,7 @@ flowchart LR
 - `data/`：测试数据与账号配置。
 - `app/`：可独立运行的演示 API，用于稳定复现测试过程。
 
-## 快速运行
+快速运行
 
 Windows PowerShell：
 
@@ -81,7 +81,7 @@ python -m pytest --html=reports/report.html --self-contained-html
 python -m pytest -m smoke
 ```
 
-## 单独启动演示 API
+单独启动演示 API
 
 ```powershell
 .\run_api.ps1
@@ -115,7 +115,7 @@ GET /health
 | Buyer | `bob` | `Buyer123!` |
 | Admin | `admin` | `Admin123!` |
 
-## 目录结构
+目录结构
 
 ```text
 campusmart-api-test-framework/
@@ -132,21 +132,7 @@ campusmart-api-test-framework/
 └── run_tests.ps1
 ```
 
-## 简历写法
-
-```text
-个人项目：CampusMart 接口自动化测试框架
-技术栈：Python / Pytest / Requests / Flask / GitHub Actions
-
-- 独立搭建接口自动化测试框架，封装 HTTP 会话、业务接口和测试数据层，
-  使用 fixture 自动启动被测服务并隔离测试状态。
-- 围绕登录、商品、权限与订单库存流程设计 53 条自动化用例，覆盖正常流程、
-  参数校验、越权访问、库存不足、重复取消等场景。
-- 使用参数化处理等价类和边界值场景，接入 Pytest HTML 报告与 GitHub Actions，
-  本地执行 53 条用例全部通过，耗时 2.78 秒。
-```
-
-## 使用边界
+使用边界
 
 这个项目用于学习和求职展示。演示 API 使用内存存储和明文密码，不具备生产环境的
 安全、持久化和高可用能力，因此不能直接用于真实业务。
