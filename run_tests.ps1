@@ -10,4 +10,5 @@ if (-not (Test-Path ".venv\Scripts\python.exe")) {
     --self-contained-html
 
 Write-Host ""
+Write-Host "API: https://petstore3.swagger.io/api/v3"
 Write-Host "HTML report: reports\report.html"

@@ -1,23 +1,23 @@
 {
-  "users": {
-    "seller": {
-      "username": "alice",
-      "password": "Seller123!"
+  "pet": {
+    "name": "qa-pet",
+    "category": {
+      "id": 1,
+      "name": "automation"
     },
-    "buyer": {
-      "username": "bob",
-      "password": "Buyer123!"
-    },
-    "admin": {
-      "username": "admin",
-      "password": "Admin123!"
-    }
+    "photoUrls": [
+      "https://example.com/qa-pet.png"
+    ],
+    "tags": [
+      {
+        "id": 101,
+        "name": "api-test"
+      }
+    ],
+    "status": "available"
   },
-  "listing": {
-    "title": "测试用机械键盘",
-    "description": "接口自动化测试创建的临时商品",
-    "category": "digital",
-    "price": 99.5,
-    "stock": 4
+  "order": {
+    "quantity": 1,
+    "status": "placed"
   }
 }

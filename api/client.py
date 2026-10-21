@@ -1,33 +1,53 @@
-"""HTTP client and service objects used by the test suite."""
+"""HTTP client and service layer for the public Swagger Petstore API."""
 
 from __future__ import annotations
 
 import logging
+import os
 from typing import Any
 
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 
 logger = logging.getLogger(__name__)
+DEFAULT_BASE_URL = "https://petstore3.swagger.io/api/v3"
 
 
-class CampusMartClient:
-    """Small service-oriented wrapper around requests.Session."""
+class PetstoreClient:
+    """Service-oriented API client with retry and request logging."""
 
-    def __init__(self, base_url: str, timeout: float = 5.0) -> None:
-        self.base_url = base_url.rstrip("/")
+    def __init__(
+        self,
+        base_url: str | None = None,
+        timeout: float = 20.0,
+    ) -> None:
+        self.base_url = (
+            base_url
+            or os.getenv("PETSTORE_BASE_URL")
+            or DEFAULT_BASE_URL
+        ).rstrip("/")
         self.timeout = timeout
         self.session = requests.Session()
         self.session.headers.update({"Accept": "application/json"})
-        self.auth = AuthService(self)
-        self.listings = ListingsService(self)
-        self.orders = OrdersService(self)
 
-    def set_token(self, token: str) -> None:
-        self.session.headers["Authorization"] = f"Bearer {token}"
+        retry = Retry(
+            total=3,
+            connect=3,
+            read=3,
+            status=3,
+            backoff_factor=0.5,
+            status_forcelist=(429, 500, 502, 503, 504),
+            allowed_methods=None,
+        )
+        adapter = HTTPAdapter(max_retries=retry)
+        self.session.mount("https://", adapter)
+        self.session.mount("http://", adapter)
 
-    def clear_token(self) -> None:
-        self.session.headers.pop("Authorization", None)
+        self.system = SystemService(self)
+        self.pets = PetService(self)
+        self.store = StoreService(self)
 
     def request(
         self,
@@ -55,7 +75,7 @@ class CampusMartClient:
         ):
             raise AssertionError(
                 f"{method.upper()} {path} expected HTTP {expected_status}, "
-                f"got {response.status_code}: {response.text}"
+                f"got {response.status_code}: {response.text[:500]}"
             )
         return response
 
@@ -63,139 +83,125 @@ class CampusMartClient:
         self.session.close()
 
 
-class AuthService:
-    def __init__(self, client: CampusMartClient) -> None:
+class SystemService:
+    def __init__(self, client: PetstoreClient) -> None:
         self.client = client
 
-    def login(
-        self,
-        username: Any,
-        password: Any,
-        *,
-        expected_status: int | None = 200,
-    ) -> requests.Response:
-        response = self.client.request(
-            "POST",
-            "/api/auth/login",
-            expected_status=expected_status,
-            json={"username": username, "password": password},
-        )
-        if response.status_code == 200:
-            self.client.set_token(response.json()["data"]["token"])
-        return response
-
-    def logout(self) -> requests.Response:
-        response = self.client.request(
-            "POST",
-            "/api/auth/logout",
-            expected_status=204,
-        )
-        self.client.clear_token()
-        return response
-
-
-class ListingsService:
-    def __init__(self, client: CampusMartClient) -> None:
-        self.client = client
-
-    def list(self, **params: Any) -> requests.Response:
+    def openapi(self) -> requests.Response:
         return self.client.request(
             "GET",
-            "/api/listings",
-            params=params,
+            "/openapi.json",
             expected_status=200,
         )
 
-    def get(
-        self,
-        listing_id: str,
-        *,
-        expected_status: int = 200,
-    ) -> requests.Response:
+
+class PetService:
+    def __init__(self, client: PetstoreClient) -> None:
+        self.client = client
+
+    def find_by_status(self, status: str) -> requests.Response:
         return self.client.request(
             "GET",
-            f"/api/listings/{listing_id}",
-            expected_status=expected_status,
+            "/pet/findByStatus",
+            params={"status": status},
+            expected_status=200,
         )
 
     def create(
         self,
         payload: dict[str, Any],
         *,
-        expected_status: int = 201,
+        expected_status: int = 200,
     ) -> requests.Response:
         return self.client.request(
             "POST",
-            "/api/listings",
+            "/pet",
             json=payload,
+            expected_status=expected_status,
+        )
+
+    def get(
+        self,
+        pet_id: int | str,
+        *,
+        expected_status: int = 200,
+    ) -> requests.Response:
+        return self.client.request(
+            "GET",
+            f"/pet/{pet_id}",
             expected_status=expected_status,
         )
 
     def update(
         self,
-        listing_id: str,
         payload: dict[str, Any],
         *,
         expected_status: int = 200,
     ) -> requests.Response:
         return self.client.request(
-            "PATCH",
-            f"/api/listings/{listing_id}",
+            "PUT",
+            "/pet",
             json=payload,
             expected_status=expected_status,
         )
 
     def delete(
         self,
-        listing_id: str,
+        pet_id: int | str,
         *,
-        expected_status: int = 204,
+        expected_status: int | None = 200,
     ) -> requests.Response:
         return self.client.request(
             "DELETE",
-            f"/api/listings/{listing_id}",
+            f"/pet/{pet_id}",
             expected_status=expected_status,
         )
 
 
-class OrdersService:
-    def __init__(self, client: CampusMartClient) -> None:
+class StoreService:
+    def __init__(self, client: PetstoreClient) -> None:
         self.client = client
 
-    def create(
+    def inventory(self) -> requests.Response:
+        return self.client.request(
+            "GET",
+            "/store/inventory",
+            expected_status=200,
+        )
+
+    def create_order(
         self,
-        listing_id: str,
-        quantity: int,
+        payload: dict[str, Any],
         *,
-        expected_status: int = 201,
+        expected_status: int = 200,
     ) -> requests.Response:
         return self.client.request(
             "POST",
-            "/api/orders",
-            json={"listing_id": listing_id, "quantity": quantity},
+            "/store/order",
+            json=payload,
             expected_status=expected_status,
         )
 
-    def get(
+    def get_order(
         self,
-        order_id: str,
+        order_id: int | str,
         *,
         expected_status: int = 200,
     ) -> requests.Response:
         return self.client.request(
             "GET",
-            f"/api/orders/{order_id}",
+            f"/store/order/{order_id}",
             expected_status=expected_status,
         )
 
-    def cancel(
+    def delete_order(
         self,
-        order_id: str,
+        order_id: int | str,
         *,
-        expected_status: int = 200,
+        expected_status: int | None = 200,
     ) -> requests.Response:
         return self.client.request(
-            "POST",
-            f"/api/orders/{order_id}/cancel",
+            "DELETE",
+            f"/store/order/{order_id}",
             expected_status=expected_status,
         )
